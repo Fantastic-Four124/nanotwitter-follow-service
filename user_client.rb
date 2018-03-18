@@ -28,7 +28,7 @@ class UserClient
     response = RestClient.get 'http://arcane-inlet-50840.herokuapp.com/hello', {}
     resp_hash = JSON.parse(response)
     key = Time.now.to_s
-    @conversation[key] = resp_hash[:hello]
+    @conversation[key] = resp_hash['hello']
     puts @conversation.inspect
   end
 end
