@@ -24,7 +24,7 @@ class UserClient
 #  end
 
   def get_hello
-    response = RestClient.get 'http://protected-bastion-93597.herokuapp.com/hello', {}
+    response = RestClient.get 'http://arcane-inlet-50840.herokuapp.com/hello', {}
     puts response
   end
 end
