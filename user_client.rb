@@ -6,6 +6,7 @@ class UserClient
 
   def initialize name
     @name = name
+    @conversation = {}
   end
 
 #  def join_game
@@ -25,6 +26,9 @@ class UserClient
 
   def get_hello
     response = RestClient.get 'http://arcane-inlet-50840.herokuapp.com/hello', {}
-    puts response
+    resp_hash = JSON.parse(response)
+    key = Time.now.to_s
+    @conversation[:key] = resp_hash[:hello]
+    puts @conversation.inspect
   end
 end
