@@ -25,7 +25,7 @@ class UserClient
 #  end
 
   def get_hello
-    response = RestClient.get 'http://arcane-inlet-50840.herokuapp.com/hello', {}
+    response = RestClient.get 'https://cryptic-anchorage-60369.herokuapp.com/hello', {}
     resp_hash = JSON.parse(response)
     key = Time.now.to_s
     @conversation[key] = resp_hash['hello']
