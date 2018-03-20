@@ -6,11 +6,11 @@ require_relative './user_client'
 set :port, 8080
 set :environment, :production
 
-client = UserClient.new 'tom'
+client = UserClient.new 'Alex'
 
 get '/hello' do
   return_message = {}
-  return_message[:hello] = 'hello, world! -- from Tom'
+  return_message[:hello] = 'hello, world! -- from Alex'
   return_message.to_json
 end
 
