@@ -10,12 +10,14 @@ class UserClient
   end
 
   def get_hello
-    response = RestClient.get 'enter url here', {}
+    response = RestClient.get 'https://cryptic-anchorage-60369.herokuapp.com/hello', {}
     resp_hash = JSON.parse(response)
     key = Time.now.to_s
-    @log.push({key: resp_hash['hello']})
+    entry = {}
+    entry[key] = resp_hash['hello']
+    @log.push(entry)
     if @log.length > 50
-      log.shift
+      @log.shift
     end
     puts @log.inspect
   end
