@@ -18,6 +18,8 @@ s = Rufus::Scheduler.singleton
 
 s.every '3s' do
   puts 'sending request'
-  client.get_hello
+  client.get_hello_cam
+  client.get_hello_zhou
+
 end
 
