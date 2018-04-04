@@ -46,6 +46,7 @@ GEM
     sinatra-activerecord (2.0.13)
       activerecord (>= 3.2)
       sinatra (>= 1.0)
+    sinatra-cors (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
     time_difference (0.7.0)
@@ -69,6 +70,7 @@ DEPENDENCIES
   redis
   sinatra
   sinatra-activerecord
+  sinatra-cors
   time_difference
 
 BUNDLED WITH
