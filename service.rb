@@ -3,6 +3,7 @@ require 'sinatra/activerecord'
 require 'json'
 require 'redis'
 require 'sinatra/cors'
+require 'byebug'
 require_relative 'models/follow'
 
 
@@ -52,13 +53,14 @@ post '/:token/users/:id/follow' do
   # puts params
   token = params['token']
   input = $redis.get(token)
+  byebug
   Thread.new{
     leader_id = Integer(input)
     follower_id = Integer(params['user_id'])
     follower_follow_leader(follower_id, leader_id)
     puts 'Done Updating DB'
   }
-  'Start follow async'
+  'Start follow async'.to_json
 end
 
 # Requires the input to have a user_id
