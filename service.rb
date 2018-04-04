@@ -2,6 +2,7 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'json'
 require 'redis'
+require 'sinatra/cors'
 require_relative 'models/follow'
 
 
@@ -9,6 +10,11 @@ require_relative 'models/follow'
 set :environment, :development
 
 # client = UserClient.new 'Alex'
+
+set :allow_origin, '*'
+set :allow_methods, 'GET,HEAD,POST'
+set :allow_headers, 'accept,content-type,if-modified-since'
+set :expose_headers, 'location,link'
 
 configure do
   uri = URI.parse("redis://rediscloud:pcmHnx1nymwXDbiBwe19McQd0eizEcGR@redis-18020.c14.us-east-1-2.ec2.cloud.redislabs.com:18020")
