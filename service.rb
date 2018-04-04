@@ -58,10 +58,11 @@ post '/:token/users/:id/follow' do
   Thread.new{
     puts 'New Thread'
     leader_id = Integer(input)
-    follower_id = Integer(params['user_id'])
+    follower_id = Integer(params['id'])
     follower_follow_leader(follower_id, leader_id)
     puts 'Done Updating DB'
   }
+  puts 'Done New'
   'Start follow async'.to_json
 end
 
