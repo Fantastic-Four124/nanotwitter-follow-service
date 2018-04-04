@@ -3,7 +3,7 @@ require 'sinatra/activerecord'
 require 'json'
 require 'redis'
 require_relative 'models/follow'
-require_relative './user_client'
+
 
 # set :port, 8080
 set :environment, :development
