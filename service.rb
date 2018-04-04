@@ -53,8 +53,10 @@ post '/:token/users/:id/follow' do
   # puts params
   token = params['token']
   input = $redis.get(token)
-  byebug
+  puts token
+  puts input
   Thread.new{
+    puts 'New Thread'
     leader_id = Integer(input)
     follower_id = Integer(params['user_id'])
     follower_follow_leader(follower_id, leader_id)
