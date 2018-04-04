@@ -57,8 +57,8 @@ post '/:token/users/:id/follow' do
   puts input
   Thread.new{
     puts 'New Thread'
-    leader_id = Integer(input)
-    follower_id = Integer(params['id'])
+    follower_id = Integer(input)
+    leader_id = Integer(params['id'])
     follower_follow_leader(follower_id, leader_id)
     puts 'Done Updating DB'
   }
