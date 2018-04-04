@@ -55,13 +55,13 @@ post '/:token/users/:id/follow' do
   input = $redis.get(token)
   puts token
   puts input
-  Thread.new{
+ # Thread.new{
     puts 'New Thread'
     follower_id = Integer(input)
     leader_id = Integer(params['id'])
     follower_follow_leader(follower_id, leader_id)
     puts 'Done Updating DB'
-  }
+#  }
   puts 'Done New'
   'Start follow async'.to_json
 end
