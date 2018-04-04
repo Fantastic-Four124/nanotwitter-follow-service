@@ -1,4 +1,4 @@
-require './user_server'
+require './service'
 run Sinatra::Application
 $stdout.sync = true
 
