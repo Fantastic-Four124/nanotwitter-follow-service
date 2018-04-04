@@ -2,7 +2,6 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'json'
 require 'redis'
-require 'rufus-scheduler'
 require_relative 'models/follow'
 require_relative './user_client'
 
