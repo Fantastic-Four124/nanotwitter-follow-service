@@ -41,6 +41,11 @@ get '/' do
   "READY".to_json
 end
 
+# For loader.io to auth
+get '/loaderio-1541f51ead65ae3319ad8207fee20f8d.txt' do
+  send_file 'loaderio-1541f51ead65ae3319ad8207fee20f8d.txt'
+end
+
 # Get the leaders of :user_id
 # returns a list of user object in json
 # {users: [userid1, userid2, userid3, userid4 ...]}
