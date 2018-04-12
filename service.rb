@@ -22,6 +22,8 @@ set :allow_headers, 'accept,content-type,if-modified-since'
 set :expose_headers, 'location,link'
 
 PREFIX = '/api/v1'
+CLIENT = MQClient.new('rpc_queue',"amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10243/U1D3A0hgJsuO")
+  
 
 # ENV = {
 #     "RABBITMQ_BIGWIG_REST_API_URL": "https://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@bigwig.lshift.net/management/179502/api",
@@ -33,12 +35,17 @@ PREFIX = '/api/v1'
 configure do
   uri = URI.parse("redis://rediscloud:pcmHnx1nymwXDbiBwe19McQd0eizEcGR@redis-18020.c14.us-east-1-2.ec2.cloud.redislabs.com:18020")
   $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  
   #byebug
 end
 
 
 get '/' do
   send_file 'loaderiosetup.json'
+end
+
+get PREFIX do
+  PREFIX.to_json
 end
 
 # For loader.io to auth
@@ -101,9 +108,8 @@ post '/users/:id/unfollow' do
 end
 
 def fo(leader_id, user_id, isFo) 
-  client = MQClient.new('rpc_queue',"amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10243/U1D3A0hgJsuO")
-  response = client.call({"leader_id": leader_id , "user_id": user_id, "isFo": isFo}.to_json)
-  client.stop
+  response = CLIENT.call({"leader_id": leader_id , "user_id": user_id, "isFo": isFo}.to_json)
+  # client.stop
   puts 'Done fo'
   {err: false}.to_json
 end
