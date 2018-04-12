@@ -63,7 +63,7 @@ get '/followers/:user_id' do
   
 end
 
-post '/:token/users/:id/follow' do
+post PREFIX + '/:token/users/:id/follow' do
   # puts params
   input = JSON.parse $redis.get(params['token']) # Get the user id
   if input
@@ -73,7 +73,7 @@ post '/:token/users/:id/follow' do
   end
 end
 
-post '/:token/users/:id/unfollow' do
+post PREFIX + '/:token/users/:id/unfollow' do
   # puts params
   input = JSON.parse $redis.get(params['token']) # Get the user id
   if input
@@ -97,7 +97,7 @@ def fo(leader_id, user_id, isFo)
   client = MQClient.new('rpc_queue',"amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10243/U1D3A0hgJsuO")
   response = client.call({"leader_id": leader_id , "user_id": user_id, "isFo": isFo}.to_json)
   client.stop
-  puts 'Done Unfo'
+  puts 'Done fo'
   {err: false}.to_json
 end
 

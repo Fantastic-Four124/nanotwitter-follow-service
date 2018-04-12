@@ -22,21 +22,21 @@ class MQClient
     @exchange = channel.default_exchange
     @server_queue_name = server_queue_name
 
-    setup_reply_queue
+    # setup_reply_queue
   end
 
   def call(n)
+
     @call_id = generate_uuid
 
     exchange.publish(n.to_s,
                      routing_key: server_queue_name,
-                     correlation_id: call_id,
-                     reply_to: reply_queue.name)
+                     correlation_id: call_id)
 
     # # wait for the signal to continue the execution
     # lock.synchronize { condition.wait(lock) }
 
-    response
+    'ok'
   end
 
   def stop

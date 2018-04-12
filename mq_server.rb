@@ -52,31 +52,36 @@ class FollowerServer
   def process(follow_json)
     # follow_json['follower_id'], follow_json['leader_id'] get be integers
     # follow_json['isFo'] is bool
-    # puts '#TrustTheProcess'
-    # puts follow_json
+    puts '#TrustTheProcess'
+    puts follow_json
+    input = JSON.parse follow_json
     # return 'ojbk'
-    if follow_json['isFo'] 
-      follower_follow_leader(follow_json['follower_id'], follow_json['leader_id'])
+    if input['isFo'] 
+      follower_follow_leader(input['user_id'], input['leader_id'])
     else
-      follower_unfollow_leader(follow_json['follower_id'], follow_json['leader_id'])
+      follower_unfollow_leader(input['user_id'], input['leader_id'])
     end
   end
 
   def follower_follow_leader(follower_id, leader_id)
+    puts "follower_id: #{follower_id}"
+    puts "leader_id: #{leader_id}"
     link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
     if link.nil?
-        relation = Follow.new
-        relation.user_id = follower_id
-        relation.leader_id = leader_id
-        relation.follow_date = Time.now
-        relation.save
-      end
+      puts "follower_follow_leader"
+      relation = Follow.new
+      relation.user_id = follower_id
+      relation.leader_id = leader_id
+      relation.follow_date = Time.now        
+      relation.save
+    end
   end
   
   def follower_unfollow_leader(follower_id, leader_id)
     link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
     if !link.nil?
-        Follow.delete(link.id)
+      puts "follower_follow_leader"
+      Follow.delete(link.id)
     end
   end
 
