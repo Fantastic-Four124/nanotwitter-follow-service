@@ -6,9 +6,7 @@ require 'byebug'
 require 'sinatra/cors'
 require_relative 'models/follow'
 require_relative 'models/user'
-require_relative 'ENV.rb'
 require_relative 'mq_client.rb'
-require_relative 'ENV.rb'
 Thread.new do
   require_relative 'mq_server.rb'
 end
@@ -22,6 +20,8 @@ set :allow_origin, '*'
 set :allow_methods, 'GET,HEAD,POST'
 set :allow_headers, 'accept,content-type,if-modified-since'
 set :expose_headers, 'location,link'
+
+PREFIX = '/api/v1'
 
 # ENV = {
 #     "RABBITMQ_BIGWIG_REST_API_URL": "https://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@bigwig.lshift.net/management/179502/api",

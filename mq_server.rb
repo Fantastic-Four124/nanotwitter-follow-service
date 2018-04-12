@@ -8,7 +8,6 @@ require 'json'
 require 'redis'
 require_relative 'models/follow'
 require_relative 'models/follow'
-require_relative 'ENV.rb'
 
 
 #Dir[File.dirname(__FILE__) + '/api/v1/user_service/*.rb'].each { |file| require file }

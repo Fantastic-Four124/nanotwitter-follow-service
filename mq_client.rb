@@ -7,7 +7,6 @@ require 'time'
 require 'json'
 require 'redis'
 require_relative 'models/user'
-require_relative 'ENV.rb'
 # require_relative 'mq_server.rb'
 
 
