@@ -2,10 +2,16 @@ require 'sinatra'
 require 'sinatra/activerecord'
 require 'json'
 require 'redis'
-require 'sinatra/cors'
 require 'byebug'
+require 'sinatra/cors'
 require_relative 'models/follow'
-
+require_relative 'models/user'
+require_relative 'ENV.rb'
+require_relative 'mq_client.rb'
+require_relative 'ENV.rb'
+Thread.new do
+  require_relative 'mq_server.rb'
+end
 
 # set :port, 8080
 set :environment, :development
@@ -16,6 +22,13 @@ set :allow_origin, '*'
 set :allow_methods, 'GET,HEAD,POST'
 set :allow_headers, 'accept,content-type,if-modified-since'
 set :expose_headers, 'location,link'
+
+# ENV = {
+#     "RABBITMQ_BIGWIG_REST_API_URL": "https://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@bigwig.lshift.net/management/179502/api",
+#     "RABBITMQ_BIGWIG_RX_URL": "amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10243/U1D3A0hgJsuO",
+#     "RABBITMQ_BIGWIG_TX_URL": "amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10242/U1D3A0hgJsuO",
+#     "RABBITMQ_BIGWIG_URL": "amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10242/U1D3A0hgJsuO"
+#   }
 
 configure do
   uri = URI.parse("redis://rediscloud:pcmHnx1nymwXDbiBwe19McQd0eizEcGR@redis-18020.c14.us-east-1-2.ec2.cloud.redislabs.com:18020")
@@ -28,76 +41,71 @@ get '/' do
   "READY".to_json
 end
 
-# Get the followers of :user_id
-# returns a list of user object in jason
+# Get the leaders of :user_id
+# returns a list of user object in json
 # {users: [userid1, userid2, userid3, userid4 ...]}
 get '/leaders/:user_id' do
   input = params[:user_id]
-  leader_id = Integer(input)
-  link = Follow.find(leader_id: leader_id).all
-  puts "link.user_id:"
-  puts link.user_id
+  id = Integer(input)
+  # TODO: get from radis
+  link = Follow.find(user_id: id).all
+  puts link
   leader_id.to_json
 end
 
 get '/followers/:user_id' do
   input = params[:user_id]
-  leader_id = Integer(input)
+  id = Integer(input)
+  # TODO: get from radis
+  link = Follow.find(leader_id: id).all
+  puts link
   leader_id.to_json
   
-
 end
 
-# Requires the input to have a user_id
 post '/:token/users/:id/follow' do
   # puts params
-  token = params['token']
-  input = $redis.get(token)
-  puts token
-  puts input
- # Thread.new{
-    puts 'New Thread'
-    follower_id = Integer(input)
-    leader_id = Integer(params['id'])
-    follower_follow_leader(follower_id, leader_id)
-    puts 'Done Updating DB'
-#  }
-  puts 'Done New'
-  'Start follow async'.to_json
-end
-
-# Requires the input to have a user_id
-post '/users/:id/unfollow' do
-  # puts params
-  input = params["id"]
-  Thread.new{
-    leader_id = Integer(input)
-    follower_id = Integer(params['user_id'])
-    follower_unfollow_leader(follower_id, leader_id)
-    puts 'Done Updating DB'
-  }
-  'Start follow async'
-end
-
-
-
-def follower_follow_leader(follower_id,leader_id)
-  link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
-  if link.nil?
-      relation = Follow.new
-      relation.user_id = follower_id
-      relation.leader_id = leader_id
-      relation.follow_date = Time.now
-      relation.save
-    end
-end
-
-def follower_unfollow_leader(follower_id,leader_id)
-  link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
-  if !link.nil?
-      Follow.delete(link.id)
+  input = JSON.parse $redis.get(params['token']) # Get the user id
+  if input
+    return fo(params['id'], input['id'], true)
+  else
+    return {err: false}.to_json
   end
 end
+
+post '/:token/users/:id/unfollow' do
+  # puts params
+  input = JSON.parse $redis.get(params['token']) # Get the user id
+  if input
+    return fo(params['id'],input['id'],false)
+  else
+    return {err: false}.to_json
+  end
+end
+
+post '/users/:id/follow' do
+  puts params
+  return fo(params['id'],params['me'],true)
+end
+
+post '/users/:id/unfollow' do
+  puts params
+  return fo(params['id'],params['me'],false)
+end
+
+def fo(leader_id, user_id, isFo) 
+  client = MQClient.new('rpc_queue',"amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10243/U1D3A0hgJsuO")
+  response = client.call({"leader_id": leader_id , "user_id": user_id, "isFo": isFo}.to_json)
+  client.stop
+  puts 'Done Unfo'
+  {err: false}.to_json
+end
+
+def protected! token
+  return !$redis.get(token).nil?
+end
+
+
 
 # s = Rufus::Scheduler.singleton
 
@@ -107,4 +115,3 @@ end
 #   client.get_hello_zhou
 
 # end
-
