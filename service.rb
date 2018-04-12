@@ -42,8 +42,8 @@ get '/' do
 end
 
 # For loader.io to auth
-get '/loaderio-1541f51ead65ae3319ad8207fee20f8d.txt' do
-  send_file 'loaderio-1541f51ead65ae3319ad8207fee20f8d.txt'
+get '/loaderio-9afcad912efcc6db54e7a209047d1a20.txt' do
+  send_file 'loaderioauth.txt'
 end
 
 # Get the leaders of :user_id
