@@ -93,13 +93,13 @@ def update_cache_follow(follower_id, leader_id, isFo)
   redis_leader_key = "#{leader_id} followers"
   redis_user_key = "#{follower_id} leaders"
   if !$redis.exists(redis_leader_key)
-    redisUserServiceCache.set(redis_leader_key, Set[].to_json)
-    redisUserServiceCache.set("#{leader_id} leaders", Set[].to_json)
+    $redis.set(redis_leader_key, Set[].to_json)
+    $redis.set("#{leader_id} leaders", Set[].to_json)
   end
 
   if !$redis.exists(redis_user_key)
-    redisUserServiceCache.set(redis_user_key, Set[].to_json)
-    redisUserServiceCache.set("#{follower_id} followers", Set[].to_json)
+    $redis.set(redis_user_key, Set[].to_json)
+    $redis.set("#{follower_id} followers", Set[].to_json)
   end
 
   followers_of_leader = JSON.parse $redis.get(redis_leader_key) 
