@@ -37,7 +37,7 @@ configure do
   uri = URI.parse(ENV['REDIS_FOLLOW'])
   $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
   uri2 = URI.parse(ENV['REDIS_USER'])
-  $redisUserServiceCache = Redis.new(:host => uri2.host, :port => uri.port, :password => uri2.password)
+  $redisUserServiceCache = Redis.new(:host => uri2.host, :port => uri2.port, :password => uri2.password)
   
   #byebug
 end
