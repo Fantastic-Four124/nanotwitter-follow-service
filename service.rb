@@ -7,6 +7,7 @@ require 'sinatra/cors'
 require_relative 'models/follow'
 require_relative 'models/user'
 require_relative 'mq_client.rb'
+
 Thread.new do
   require_relative 'mq_server.rb'
 end
@@ -33,8 +34,10 @@ CLIENT = MQClient.new('rpc_queue',"amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YU
 #   }
 
 configure do
-  uri = URI.parse("redis://rediscloud:pcmHnx1nymwXDbiBwe19McQd0eizEcGR@redis-18020.c14.us-east-1-2.ec2.cloud.redislabs.com:18020")
+  uri = URI.parse(ENV['REDIS_FOLLOW'])
   $redis = Redis.new(:host => uri.host, :port => uri.port, :password => uri.password)
+  uri2 = URI.parse(ENV['REDIS_USER'])
+  $redisUserServiceCache = Redis.new(:host => uri2.host, :port => uri.port, :password => uri2.password)
   
   #byebug
 end
@@ -107,8 +110,19 @@ post '/users/:id/unfollow' do
   return fo(params['id'],params['me'],false)
 end
 
-def fo(leader_id, user_id, isFo) 
-  response = CLIENT.call({"leader_id": leader_id , "user_id": user_id, "isFo": isFo}.to_json)
+# DANGER ZONE: calling this will clear the whole follow db
+# and cache
+post '/testinterface/clearall' do
+  if params['pw'] == 'asdfg' 
+    Follow.destroy_all
+    'DONE'.to_json
+  else
+    'YOU DONT HAVE THE PERMISSION, DENIED.'.to_json
+  end
+end
+
+def fo(leader_id, user_id, isFo)
+  CLIENT.call({"leader_id": leader_id , "user_id": user_id, "isFo": isFo}.to_json)
   # client.stop
   puts 'Done fo'
   {err: false}.to_json

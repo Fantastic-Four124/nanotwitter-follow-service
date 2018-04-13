@@ -1,11 +1,11 @@
 require 'bunny'
-require 'sinatra'
 require 'sinatra/activerecord'
 require 'byebug'
 require 'time_difference'
 require 'time'
 require 'json'
 require 'redis'
+require 'set'
 require_relative 'models/follow'
 require_relative 'models/follow'
 
@@ -63,27 +63,69 @@ class FollowerServer
     end
   end
 
-  def follower_follow_leader(follower_id, leader_id)
-    puts "follower_id: #{follower_id}"
-    puts "leader_id: #{leader_id}"
-    link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
-    if link.nil?
-      puts "follower_follow_leader"
-      relation = Follow.new
-      relation.user_id = follower_id
-      relation.leader_id = leader_id
-      relation.follow_date = Time.now        
-      relation.save
-    end
+end
+
+def follower_follow_leader(follower_id, leader_id)
+  update_cache_follow(follower_id, leader_id, true)
+  puts "follower_id: #{follower_id}"
+  puts "leader_id: #{leader_id}"
+  link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
+  if link.nil?
+    puts "follower_follow_leader"
+    relation = Follow.new
+    relation.user_id = follower_id
+    relation.leader_id = leader_id
+    relation.follow_date = Time.now        
+    relation.save
   end
+end
+
+def follower_unfollow_leader(follower_id, leader_id)
+  update_cache_follow(follower_id, leader_id, false)
+  link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
+  if !link.nil?
+    puts "follower_follow_leader"
+    Follow.delete(link.id)
+  end
+end
+
+def update_cache_follow(follower_id, leader_id, isFo)
+  redis_leader_key = "#{leader_id} followers"
+  redis_user_key = "#{follower_id} leaders"
+  if !$redisUserServiceCache.exists(redis_leader_key)
+    redisUserServiceCache.set(redis_leader_key, Set[].to_json)
+    redisUserServiceCache.set("#{leader_id} leaders", Set[].to_json)
+  end
+
+  if !$redisUserServiceCache.exists(redis_user_key)
+    redisUserServiceCache.set(redis_user_key, Set[].to_json)
+    redisUserServiceCache.set("#{follower_id} followers", Set[].to_json)
+  end
+
+  followers_of_leader = JSON.parse $redisUserServiceCache.get(redis_leader_key) 
+  leaders_of_user = JSON.parse $redisUserServiceCache.get(redis_user_key) 
+
+  users_info_map = JSON.parse $redis.get(follower_id)
+  leader_info_map = JSON.parse $redis.get(leader_id)
+
   
-  def follower_unfollow_leader(follower_id, leader_id)
-    link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
-    if !link.nil?
-      puts "follower_follow_leader"
-      Follow.delete(link.id)
-    end
+
+  if isFo 
+    followers_of_leader.add(follower_id)
+    leaders_of_user.add(leader_id)
+    leader_info_map['number_of_followers'] += 1
+    users_info_map['number_of_leaders'] += 1
+  else # We dont love anymore
+    followers_of_leader.delete(follower_id)
+    leaders_of_user.delete(leader_id)
+    leader_info_map['number_of_followers'] -= 1
+    users_info_map['number_of_leaders'] -= 1
   end
+
+  $redisUserServiceCache.set(redis_user_key, leaders_of_user.to_json)
+  $redisUserServiceCache.set(redis_leader_key, followers_of_leader.to_json)
+  $redis.set(follower_id,users_info_map.to_json)
+  $redis.set(leader_id,leader_info_map.to_json)
 
 end
 
