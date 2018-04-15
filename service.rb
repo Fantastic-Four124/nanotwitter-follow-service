@@ -95,11 +95,12 @@ end
 def get_user_object(id)
   cache = $redisUserServiceCache.get(id) 
   if cache.nil? 
-    # TODO
+    usrname = User.find(id).username
   else 
-    # TODO  
+    usr_cache = JSON.parse chache
+    usrname = usr_cache['username']
   end
-  return {}
+  { 'id': id, 'username': usrname }
 end
 
 get '/followers/:user_id' do
@@ -114,7 +115,9 @@ get '/followers/:user_id' do
     leaders.each_key { |leader| result << leader }
   else 
     links = Follow.where(leader_id: id)
-    links.each { |follow| result << follow.leader_id }
+    links.each do |follow| 
+      result << get_user_object(follow.user_id)
+    end
     temp = {}
     links.each { |follow| temp[follow.leader_id] = true }
     $redis.set("#{id} followers", temp.to_json)
