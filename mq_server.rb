@@ -121,8 +121,21 @@ def update_cache_follow(follower_id, leader_id, isFo)
   puts followers_of_leader
   puts leaders_of_user
 
-  users_info_map = JSON.parse $redisUserServiceCache.get(follower_id)
-  leader_info_map = JSON.parse $redisUserServiceCache.get(leader_id)
+  tmp3 = $redisUserServiceCache.get(follower_id)
+  tmp4 = $redisUserServiceCache.get(leader_id)
+
+  if tmp3 == nil
+    users_info_map = nil
+  else 
+    users_info_map = JSON.parse tmp3
+  end
+  
+  if tmp4 == nil 
+    leader_info_map = nil
+  else
+    leader_info_map = JSON.parse tmp4
+  end
+  
 
   puts users_info_map
   puts leader_info_map
