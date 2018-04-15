@@ -79,14 +79,27 @@ get '/leaders/:user_id' do
     leaders.each_key { |leader| result << leader }
   else 
     links = Follow.where(user_id: id)
-    links.each { |follow| result << follow.leader_id }
+    links.each do |follow| 
+      result << get_user_object(follow.leader_id)
+    end
     temp = {}
     links.each { |follow| temp[follow.leader_id] = true }
     $redis.set("#{id} leaders", temp.to_json)
   end
   
   puts result
+
   result.to_json
+end
+
+def get_user_object(id)
+  cache = $redisUserServiceCache.get(id) 
+  if cache.nil? 
+    # TODO
+  else 
+    # TODO  
+  end
+  return {}
 end
 
 get '/followers/:user_id' do
@@ -118,7 +131,7 @@ end
 
 post PREFIX + '/:token/users/:id/follow' do
   # puts params
-  input = JSON.parse $redis.get(params['token']) # Get the user id
+  input = JSON.parse $redisUserServiceCache.get(params['token']) # Get the user id
   if input
     return fo(params['id'], input['id'], true)
   else
@@ -128,7 +141,7 @@ end
 
 post PREFIX + '/:token/users/:id/unfollow' do
   # puts params
-  input = JSON.parse $redis.get(params['token']) # Get the user id
+  input = JSON.parse $redisUserServiceCache.get(params['token']) # Get the user id
   if input
     return fo(params['id'],input['id'], false)
   else
