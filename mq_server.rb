@@ -107,27 +107,44 @@ def update_cache_follow(follower_id, leader_id, isFo)
   followers_of_leader = JSON.parse $redis.get(redis_leader_key) 
   leaders_of_user = JSON.parse $redis.get(redis_user_key) 
 
+  puts followers_of_leader
+  puts leaders_of_user
+
   users_info_map = JSON.parse $redisUserServiceCache.get(follower_id)
   leader_info_map = JSON.parse $redisUserServiceCache.get(leader_id)
 
+  puts users_info_map
+  puts leader_info_map
   
 
   if isFo 
     followers_of_leader.add(follower_id)
     leaders_of_user.add(leader_id)
-    leader_info_map['number_of_followers'] += 1
-    users_info_map['number_of_leaders'] += 1
+    if users_info_map != nil 
+      users_info_map['number_of_leaders'] += 1
+    end
+    if leader_info_map != nil
+      leader_info_map['number_of_followers'] += 1
+    end
   else # We dont love anymore
     followers_of_leader.delete(follower_id)
     leaders_of_user.delete(leader_id)
-    leader_info_map['number_of_followers'] -= 1
-    users_info_map['number_of_leaders'] -= 1
+    if leader_info_map != nil
+      leader_info_map['number_of_followers'] -= 1
+    end
+    if users_info_map != nil 
+      users_info_map['number_of_leaders'] -= 1
+    end
   end
 
   $redis.set(redis_user_key, leaders_of_user.to_json)
   $redis.set(redis_leader_key, followers_of_leader.to_json)
-  $redisUserServiceCache.set(follower_id,users_info_map.to_json)
-  $redisUserServiceCache.set(leader_id,leader_info_map.to_json)
+  if users_info_map != nil 
+    $redisUserServiceCache.set(follower_id,users_info_map.to_json)
+  end
+  if leader_info_map != nil
+    $redisUserServiceCache.set(leader_id,leader_info_map.to_json)
+  end
 
 end
 
