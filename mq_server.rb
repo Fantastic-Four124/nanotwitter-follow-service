@@ -115,8 +115,8 @@ def update_cache_follow(follower_id, leader_id, isFo)
 
   puts 'make new 4'
 
-  followers_of_leader = tmp1
-  leaders_of_user = tmp2
+  followers_of_leader = JSON.parse tmp1
+  leaders_of_user = JSON.parse tmp2
 
   puts followers_of_leader
   puts leaders_of_user
