@@ -92,6 +92,8 @@ end
 def update_cache_follow(follower_id, leader_id, isFo)
   redis_leader_key = "#{leader_id} followers"
   redis_user_key = "#{follower_id} leaders"
+  puts redis_leader_key
+  puts redis_user_key
   if !$redis.exists(redis_leader_key)
     $redis.set(redis_leader_key, Set[].to_json)
     $redis.set("#{leader_id} leaders", Set[].to_json)
