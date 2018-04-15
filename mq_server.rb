@@ -109,6 +109,8 @@ def update_cache_follow(follower_id, leader_id, isFo)
     $redis.set("#{follower_id} followers", EMPTY_SET_JSON)
   end
 
+  puts 'make new 4'
+
   followers_of_leader = JSON.parse $redis.get(redis_leader_key)
   leaders_of_user = JSON.parse $redis.get(redis_user_key)
 
