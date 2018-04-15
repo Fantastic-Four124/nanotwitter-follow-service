@@ -106,7 +106,7 @@ def get_user_object(id)
     usrname = User.find(id).username
     
   else 
-    usr_cache = JSON.parse chache
+    usr_cache = JSON.parse cache
     usrname = usr_cache['username']
   end
   puts usrname
