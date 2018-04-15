@@ -9,6 +9,7 @@ require 'set'
 require_relative 'models/follow'
 require_relative 'models/follow'
 
+EMPTY_SET_JSON = Set[].to_json
 
 #Dir[File.dirname(__FILE__) + '/api/v1/user_service/*.rb'].each { |file| require file }
 
@@ -95,13 +96,14 @@ def update_cache_follow(follower_id, leader_id, isFo)
   puts redis_leader_key
   puts redis_user_key
   if !$redis.exists(redis_leader_key)
-    $redis.set(redis_leader_key, Set[].to_json)
-    $redis.set("#{leader_id} leaders", Set[].to_json)
+    
+    $redis.set(redis_leader_key, EMPTY_SET_JSON)
+    $redis.set("#{leader_id} leaders", EMPTY_SET_JSON)
   end
 
   if !$redis.exists(redis_user_key)
-    $redis.set(redis_user_key, Set[].to_json)
-    $redis.set("#{follower_id} followers", Set[].to_json)
+    $redis.set(redis_user_key, EMPTY_SET_JSON)
+    $redis.set("#{follower_id} followers", EMPTY_SET_JSON)
   end
 
   followers_of_leader = JSON.parse $redis.get(redis_leader_key) 
