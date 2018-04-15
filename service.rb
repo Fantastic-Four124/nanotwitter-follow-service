@@ -8,6 +8,8 @@ require_relative 'models/follow'
 require_relative 'models/user'
 require_relative 'mq_client.rb'
 
+require_relative 'local_env.rb' if ENV['RACK_ENV'] != 'production'
+
 Thread.new do
   require_relative 'mq_server.rb'
 end

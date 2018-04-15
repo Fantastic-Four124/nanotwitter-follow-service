@@ -9,8 +9,6 @@ require 'set'
 require_relative 'models/follow'
 require_relative 'models/follow'
 
-EMPTY_SET_JSON = Set[].to_json
-
 #Dir[File.dirname(__FILE__) + '/api/v1/user_service/*.rb'].each { |file| require file }
 
 class FollowerServer
@@ -101,16 +99,16 @@ def update_cache_follow(follower_id, leader_id, isFo)
 
   if tmp1 == nil
     puts  'make new 1'
-    tmp1 = EMPTY_SET_JSON
-    $redis.set("#{leader_id} leaders", EMPTY_SET_JSON)
+    tmp1 = '{}'
+    $redis.set("#{leader_id} leaders", '{}')
   end
 
   puts 'make new 3'
 
   if tmp2 == nil
     puts 'make new 2'
-    tmp2 = EMPTY_SET_JSON
-    $redis.set("#{follower_id} followers", EMPTY_SET_JSON)
+    tmp2 = '{}'
+    $redis.set("#{follower_id} followers", '{}')
   end
 
   puts 'make new 4'
@@ -121,8 +119,8 @@ def update_cache_follow(follower_id, leader_id, isFo)
   followers_of_leader = JSON.parse tmp1
   leaders_of_user = JSON.parse tmp2
 
-  puts followers_of_leader
-  puts leaders_of_user
+  puts followers_of_leader.class
+  puts leaders_of_user.class
 
   tmp3 = $redisUserServiceCache.get(follower_id)
   tmp4 = $redisUserServiceCache.get(leader_id)
@@ -145,8 +143,8 @@ def update_cache_follow(follower_id, leader_id, isFo)
   
 
   if isFo 
-    followers_of_leader.add(follower_id)
-    leaders_of_user.add(leader_id)
+    followers_of_leader[follower_id] = true
+    leaders_of_user[leader_id] = true
     if users_info_map != nil 
       users_info_map['number_of_leaders'] += 1
     end
