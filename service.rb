@@ -70,62 +70,77 @@ end
 get '/leaders/:user_id' do
   input = params[:user_id]
   id = Integer(input)
-  result = []
-  cache = $redis.get("#{id} leaders")
-  if cache != nil 
-    puts 'xxxxxxxxx'
-    puts cache
-    leaders = JSON.parse cache
-    leaders.each_key { |leader| result << leader }
-  else 
-    links = Follow.where(user_id: id)
-    links.each do |follow| 
-      result << get_user_object(follow.leader_id)
-    end
-    temp = {}
-    links.each { |follow| temp[follow.leader_id] = true }
-    $redis.set("#{id} leaders", temp.to_json)
-  end
-  
-  puts result
-
-  result.to_json
-end
-
-def get_user_object(id)
-  cache = $redisUserServiceCache.get(id) 
-  if cache.nil? 
-    usrname = User.find(id).username
-  else 
-    usr_cache = JSON.parse chache
-    usrname = usr_cache['username']
-  end
-  { 'id': id, 'username': usrname }
+  get_user_following(id, false)
 end
 
 get '/followers/:user_id' do
   input = params[:user_id]
   id = Integer(input)
+  get_user_following(id, true)
+end
+
+get PREFIX + '/:token/users/:id/follower-list' do
+  # puts params
+  input = JSON.parse $redisUserServiceCache.get(params['token']) # Get the user id
+  if input
+    return get_user_following(params['id'], true)
+  else
+    return {err: true}.to_json
+  end
+end
+
+get PREFIX + '/:token/users/:id/leader-list' do
+  # puts params
+  input = JSON.parse $redisUserServiceCache.get(params['token']) # Get the user id
+  if input
+    return get_user_following(params['id'], false)
+  else
+    return {err: true}.to_json
+  end
+end
+
+def get_user_object(id)
+  cache = $redisUserServiceCache.get(id) 
+  if cache.nil? 
+    # TODO: If hit cache failed, save it to cache
+    usrname = User.find(id).username
+    
+  else 
+    usr_cache = JSON.parse chache
+    usrname = usr_cache['username']
+  end
+  puts usrname
+  { 'id': id, 'username': usrname }
+end
+
+def get_user_following(id, isFo)
   result = []
-  cache = $redis.get("#{id} followers")
+  cache = $redis.get("#{id} followers") if isFo
+  cache = $redis.get("#{id} leaders") if !isFo
   if cache != nil 
     puts 'xxxxxxxxx'
     puts cache
     leaders = JSON.parse cache
-    leaders.each_key { |leader| result << leader }
+    leaders.each_key { |usrid| result << get_user_object(usrid) }
   else 
-    links = Follow.where(leader_id: id)
+    links = Follow.where(leader_id: id) if isFo
+    links = Follow.where(user_id: id) if !isFo
     links.each do |follow| 
-      result << get_user_object(follow.user_id)
+      result << get_user_object(follow.user_id) if isFo
+      result << get_user_object(follow.leader_id) if !isFo
     end
     temp = {}
-    links.each { |follow| temp[follow.leader_id] = true }
-    $redis.set("#{id} followers", temp.to_json)
+    links.each { |follow| temp[follow.user_id] = true } if isFo
+    links.each { |follow| temp[follow.leader_id] = true } if !isFo
+    $redis.set("#{id} followers", temp.to_json) if isFo
+    $redis.set("#{id} leaders", temp.to_json) if !isFo
   end
 
   puts result
   result.to_json
 end
+
+
 
 # TODO
 # Abstract get '/leaders/:user_id' and get '/followers/:user_id'
@@ -181,16 +196,5 @@ def fo(leader_id, user_id, isFo)
 end
 
 def protected! token
-  return !$redis.get(token).nil?
+  return !$redisUserServiceCache.get(token).nil?
 end
-
-
-
-# s = Rufus::Scheduler.singleton
-
-# s.every '3s' do
-#   puts 'sending request'
-#   client.get_hello_cam
-#   client.get_hello_zhou
-
-# end
