@@ -59,6 +59,10 @@ get '/loaderio-9afcad912efcc6db54e7a209047d1a20.txt' do
 end
 
 
+# TODO
+# Abstract get '/leaders/:user_id' and get '/followers/:user_id'
+# Return a hash instead to optimize 
+# TODO
 
 # Get the leaders of :user_id
 # returns a list of user object in json
@@ -66,21 +70,51 @@ end
 get '/leaders/:user_id' do
   input = params[:user_id]
   id = Integer(input)
-  # TODO: get from radis
-  link = Follow.find(user_id: id).all
-  puts link
-  leader_id.to_json
+  result = []
+  cache = $redis.get("#{id} leaders")
+  if cache != nil 
+    puts 'xxxxxxxxx'
+    puts cache
+    leaders = JSON.parse cache
+    leaders.each_key { |leader| result << leader }
+  else 
+    links = Follow.where(user_id: id)
+    links.each { |follow| result << follow.leader_id }
+    temp = {}
+    links.each { |follow| temp[follow.leader_id] = true }
+    $redis.set("#{id} leaders", temp.to_json)
+  end
+  
+  puts result
+  result.to_json
 end
 
 get '/followers/:user_id' do
   input = params[:user_id]
   id = Integer(input)
-  # TODO: get from radis
-  link = Follow.find(leader_id: id).all
-  puts link
-  leader_id.to_json
-  
+  result = []
+  cache = $redis.get("#{id} followers")
+  if cache != nil 
+    puts 'xxxxxxxxx'
+    puts cache
+    leaders = JSON.parse cache
+    leaders.each_key { |leader| result << leader }
+  else 
+    links = Follow.where(leader_id: id)
+    links.each { |follow| result << follow.leader_id }
+    temp = {}
+    links.each { |follow| temp[follow.leader_id] = true }
+    $redis.set("#{id} followers", temp.to_json)
+  end
+
+  puts result
+  result.to_json
 end
+
+# TODO
+# Abstract get '/leaders/:user_id' and get '/followers/:user_id'
+# Return a hash instead to optimize 
+# TODO
 
 post PREFIX + '/:token/users/:id/follow' do
   # puts params
