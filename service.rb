@@ -86,7 +86,7 @@ post PREFIX + '/:token/users/:id/follow' do
   if input
     return fo(params['id'], input['id'], true)
   else
-    return {err: false}.to_json
+    return {err: true}.to_json
   end
 end
 
@@ -94,9 +94,9 @@ post PREFIX + '/:token/users/:id/unfollow' do
   # puts params
   input = JSON.parse $redis.get(params['token']) # Get the user id
   if input
-    return fo(params['id'],input['id'],false)
+    return fo(params['id'],input['id'], false)
   else
-    return {err: false}.to_json
+    return {err: true}.to_json
   end
 end
 

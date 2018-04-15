@@ -95,24 +95,28 @@ def update_cache_follow(follower_id, leader_id, isFo)
   redis_user_key = "#{follower_id} leaders"
   puts redis_leader_key
   puts redis_user_key
-  if !$redis.exists(redis_leader_key)
+
+  tmp1 = $redis.get(redis_leader_key)
+  tmp2 = $redis.get(redis_user_key)
+
+  if tmp1 == nil
     puts 'make new 1'
-    $redis.set(redis_leader_key, EMPTY_SET_JSON)
+    tmp1 = EMPTY_SET_JSON
     $redis.set("#{leader_id} leaders", EMPTY_SET_JSON)
   end
 
   puts 'make new 3'
 
-  if !$redis.exists(redis_user_key)
+  if tmp2 == nil
     puts 'make new 2'
-    $redis.set(redis_user_key, EMPTY_SET_JSON)
+    tmp2 = EMPTY_SET_JSON
     $redis.set("#{follower_id} followers", EMPTY_SET_JSON)
   end
 
   puts 'make new 4'
 
-  followers_of_leader = JSON.parse $redis.get(redis_leader_key)
-  leaders_of_user = JSON.parse $redis.get(redis_user_key)
+  followers_of_leader = tmp1
+  leaders_of_user = tmp2
 
   puts followers_of_leader
   puts leaders_of_user
