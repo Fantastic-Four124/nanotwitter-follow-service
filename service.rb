@@ -25,7 +25,7 @@ set :allow_headers, 'accept,content-type,if-modified-since'
 set :expose_headers, 'location,link'
 
 PREFIX = '/api/v1'
-CLIENT = MQClient.new('rpc_queue',"amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10243/U1D3A0hgJsuO")
+CLIENT = MQClient.new('rpc_queue',ENV['RABBIT_MQ'])
   
 
 # ENV = {
@@ -57,12 +57,6 @@ end
 get '/loaderio-9afcad912efcc6db54e7a209047d1a20.txt' do
   send_file 'loaderioauth.txt'
 end
-
-
-# TODO
-# Abstract get '/leaders/:user_id' and get '/followers/:user_id'
-# Return a hash instead to optimize 
-# TODO
 
 # Get the leaders of :user_id
 # returns a list of user object in json
@@ -135,7 +129,6 @@ def get_user_following(id, isFo)
     $redis.set("#{id} followers", temp.to_json) if isFo
     $redis.set("#{id} leaders", temp.to_json) if !isFo
   end
-
   puts result
   result.to_json
 end

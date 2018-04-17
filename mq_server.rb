@@ -88,40 +88,50 @@ def follower_unfollow_leader(follower_id, leader_id)
   end
 end
 
-def update_cache_follow(follower_id, leader_id, isFo)
+def update_cache_follow(follower_id, leader_id, isFollowing)
   redis_leader_key = "#{leader_id} followers"
   redis_user_key = "#{follower_id} leaders"
-  puts redis_leader_key
-  puts redis_user_key
 
+  followers_of_leader, leaders_of_user = get_leaders_followers_map(redis_leader_key, redis_user_key)
+
+  users_info_map, leader_info_map = get_user_obj_cache(follower_id, leader_id)
+
+  if isFollowing 
+    followers_of_leader[follower_id] = true
+    leaders_of_user[leader_id] = true
+    users_info_map['number_of_leaders'] += 1 if !users_info_map.nil? 
+    eader_info_map['number_of_followers'] += 1 if !leader_info_map.nil?
+  else # We dont love anymore
+    followers_of_leader.delete(follower_id)
+    leaders_of_user.delete(leader_id)
+    leader_info_map['number_of_followers'] -= 1 if !leader_info_map.nil?
+    users_info_map['number_of_leaders'] -= 1 if !users_info_map.nil?
+  end
+
+  $redis.set(redis_user_key, leaders_of_user.to_json)
+  $redis.set(redis_leader_key, followers_of_leader.to_json)
+  $redisUserServiceCache.set(follower_id, users_info_map.to_json) if !users_info_map.nil?
+  $redisUserServiceCache.set(leader_id, leader_info_map.to_json) if !leader_info_map.nil?
+end
+
+def get_leaders_followers_map(redis_leader_key, redis_user_key)
   tmp1 = $redis.get(redis_leader_key)
   tmp2 = $redis.get(redis_user_key)
 
   if tmp1 == nil
-    puts  'make new 1'
     tmp1 = '{}'
     $redis.set("#{leader_id} leaders", '{}')
   end
-
-  puts 'make new 3'
 
   if tmp2 == nil
     puts 'make new 2'
     tmp2 = '{}'
     $redis.set("#{follower_id} followers", '{}')
   end
+  return JSON.parse(tmp1), JSON.parse(tmp2)
+end
 
-  puts 'make new 4'
-
-  puts tmp1
-  puts tmp2
-
-  followers_of_leader = JSON.parse tmp1
-  leaders_of_user = JSON.parse tmp2
-
-  puts followers_of_leader.class
-  puts leaders_of_user.class
-
+def get_user_obj_cache(follower_id, leader_id)
   tmp3 = $redisUserServiceCache.get(follower_id)
   tmp4 = $redisUserServiceCache.get(leader_id)
 
@@ -136,43 +146,10 @@ def update_cache_follow(follower_id, leader_id, isFo)
   else
     leader_info_map = JSON.parse tmp4
   end
-  
-
-  puts users_info_map
-  puts leader_info_map
-  
-
-  if isFo 
-    followers_of_leader[follower_id] = true
-    leaders_of_user[leader_id] = true
-    if users_info_map != nil 
-      users_info_map['number_of_leaders'] += 1
-    end
-    if leader_info_map != nil
-      leader_info_map['number_of_followers'] += 1
-    end
-  else # We dont love anymore
-    followers_of_leader.delete(follower_id)
-    leaders_of_user.delete(leader_id)
-    if leader_info_map != nil
-      leader_info_map['number_of_followers'] -= 1
-    end
-    if users_info_map != nil 
-      users_info_map['number_of_leaders'] -= 1
-    end
-  end
-
-  $redis.set(redis_user_key, leaders_of_user.to_json)
-  $redis.set(redis_leader_key, followers_of_leader.to_json)
-  if users_info_map != nil 
-    $redisUserServiceCache.set(follower_id,users_info_map.to_json)
-  end
-  if leader_info_map != nil
-    $redisUserServiceCache.set(leader_id,leader_info_map.to_json)
-  end
-
+  # puts users_info_map
+  # puts leader_info_map
+  return users_info_map, leader_info_map
 end
-
 
 begin
   server = FollowerServer.new("amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10242/U1D3A0hgJsuO")
