@@ -7,18 +7,14 @@ require 'sinatra/cors'
 require_relative 'models/follow'
 require_relative 'models/user'
 require_relative 'mq_client.rb'
-
 require_relative 'local_env.rb' if ENV['RACK_ENV'] != 'production'
+require_relative 'test_interface/test_interface.rb' if ENV['test_interface'] == 'Y'
 
 Thread.new do
-  require_relative 'mq_server.rb'
+  require_relative 'mq_server.rb' 
 end
 
-# set :port, 8080
 set :environment, :development
-
-# client = UserClient.new 'Alex'
-
 set :allow_origin, '*'
 set :allow_methods, 'GET,HEAD,POST'
 set :allow_headers, 'accept,content-type,if-modified-since'
@@ -173,12 +169,8 @@ end
 # DANGER ZONE: calling this will clear the whole follow db
 # and cache
 post '/testinterface/clearall' do
-  if params['pw'] == 'asdfg' 
-    Follow.destroy_all
-    'DONE'.to_json
-  else
-    'YOU DONT HAVE THE PERMISSION, DENIED.'.to_json
-  end
+  Follow.destroy_all
+  'DONE'.to_json
 end
 
 def fo(leader_id, user_id, isFo)

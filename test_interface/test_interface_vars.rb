@@ -1,0 +1,10 @@
+TESTUSER_NAME = 'testuser'
+TESTUSER_EMAIL = 'testuser@sample.com'
+TESTUSER_PASSWORD = 'password'
+NUMBER_OF_SEED_USERS = 1000
+TESTUSER_ID = 3456 # The test user will always have 3456
+RETRY_LIMIT = 15
+PREFIX_TWEET_W_SERVICE = "https://nt-tweet-writer.herokuapp.com"
+PREFIX_FOLLOW_SERVICE = 'https://fierce-garden-41263.herokuapp.com'
+PREFIX_USER_SERVICE = 'https://nanotwitter-userservice.herokuapp.com'
+SEED_USERS_DIR = './seeds/users.csv'
