@@ -1,17 +1,19 @@
 require 'sinatra/activerecord'
+require 'sinatra'
 require 'byebug'
 require 'faker' # fake people showing fake love
 require 'json'
-require_relative 'models/user'
-require_relative 'models/follow'
+require_relative '../models/user'
+require_relative '../models/follow'
 require_relative 'test_interface_vars.rb'
+require 'rest-client'
 
 # This helper class handles all communications with other services
 # and some general process of generating some data
 class TestInterfaceHelper
 
   def get_username(user_id)
-    get PREFIX_USER_SERVICE + "/api/v1/#{user_id}"
+    RestClient.get PREFIX_USER_SERVICE + "/api/v1/#{user_id}"
     if last_response.ok? 
       if last_response.body == '{\"err\":true}'
         puts "user_id #{user_id} not in database!"
@@ -29,15 +31,23 @@ class TestInterfaceHelper
 
   def create_new_user(user_id, username, password)
     puts "id:#{user_id}, name:#{username}, password:#{password}"
-    
+    puts({ name: username, password: password }.to_json)
+
     # TODO
   end
 
   # This has to return an id
   def create_new_user_noid(username, password)
-    puts "id:#{user_id}, name:#{username}, password:#{password}"
-    # TODO
+    puts({ name: username, password: password }.to_json)
+    # post PREFIX_USER_SERVICE + '/testcreate', {name: username, password: password}.to_json, "CONTENT_TYPE" => "application/json"
+    # puts last_response.body.to_i
     return 0
+  end
+
+  def bulkload_new_user(result)
+    puts result.to_json
+    puts 'bulkbulkbulk'
+    RestClient.post PREFIX_USER_SERVICE + '/bulkinsert', {'bulk': result.to_json}
   end
 
 
@@ -51,15 +61,21 @@ class TestInterfaceHelper
 
   def tweet(user_id, message, timestamps)
     jsonmsg = { "username": get_username(user_id), "id": user_id, "time": timestamps }.to_json
-    post PREFIX_TWEET_W_SERVICE + '/testing/tweets/new', jsonmsg, "CONTENT_TYPE" => "application/json"
+    # RestClient.post PREFIX_TWEET_W_SERVICE + '/testing/tweets/new', jsonmsg, "CONTENT_TYPE" => "application/json"
+  end
+
+  def clear_all 
+    destroy_all_follows
+    destroy_all_users
+    destroy_all_tweets
   end
 
   def destroy_all_follows
-    post PREFIX_FOLLOW_SERVICE + '/testinterface/clearall'
+    RestClient.post PREFIX_FOLLOW_SERVICE + '/testinterface/clearall',""
   end
 
   def destroy_all_users
-    # TODO
+    
   end
 
   def destroy_all_tweets
@@ -67,8 +83,9 @@ class TestInterfaceHelper
   end
 
   def recreate_testuser
-    result = User.new(id: TESTUSER_ID, username: TESTUSER_NAME, password: TESTUSER_PASSWORD, email:TESTUSER_EMAIL).save
-    puts "Recreate testuser -> #{result}"
+    create_new_user(TESTUSER_ID, TESTUSER_NAME, TESTUSER_PASSWORD)
+    # result = User.new(id: TESTUSER_ID, username: TESTUSER_NAME, password: TESTUSER_PASSWORD, email:TESTUSER_EMAIL).save
+    # puts "Recreate testuser -> #{result}"
   end
 
 
@@ -90,13 +107,14 @@ class TestInterfaceHelper
   end
 
   def report_status
-    status = {
-      'number of users': User.count,
-      'number of tweets': Tweet.count,
-      'number of follow': Follow.count,
-      'Id of Test user': TESTUSER_ID
-    }
-    status
+    # status = {
+    #   'number of users': User.count,
+    #   'number of tweets': Tweet.count,
+    #   'number of follow': Follow.count,
+    #   'Id of Test user': TESTUSER_ID
+    # }
+    # status
+    return 'ojbk'
   end
 
   def generate_code(number)

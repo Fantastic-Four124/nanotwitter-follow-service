@@ -8,10 +8,10 @@ require_relative 'models/follow'
 require_relative 'models/user'
 require_relative 'mq_client.rb'
 require_relative 'local_env.rb' if ENV['RACK_ENV'] != 'production'
-require_relative 'test_interface/test_interface.rb' if ENV['test_interface'] == 'Y'
+require_relative 'test_interface/test_interface.rb'
 
 Thread.new do
-  require_relative 'mq_server.rb' 
+  require_relative 'mq_server.rb'
 end
 
 set :environment, :development
@@ -22,6 +22,7 @@ set :expose_headers, 'location,link'
 
 PREFIX = '/api/v1'
 CLIENT = MQClient.new('rpc_queue',ENV['RABBIT_MQ'])
+# CLIENT_USR = MQClient.new('usr_fo_queue',ENV['RABBIT_MQ_USR'])
   
 
 # ENV = {
@@ -174,8 +175,8 @@ post '/testinterface/clearall' do
 end
 
 def fo(leader_id, user_id, isFo)
-  CLIENT.call({"leader_id": leader_id , "user_id": user_id, "isFo": isFo}.to_json)
-  # client.stop
+  CLIENT.call({"leader_id": leader_id, "user_id": user_id, "isFo": isFo}.to_json)
+  # CLIENT_USR.call({"leader_id": leader_id, "user_id": user_id, "isFo": isFo}.to_json)
   puts 'Done fo'
   {err: false}.to_json
 end

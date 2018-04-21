@@ -3,7 +3,11 @@ require 'byebug'
 require 'faker' # fake people showing fake love
 require_relative 'test_interface_helper.rb'
 require_relative 'test_interface_vars.rb'
-HELPER = test_interface_helper.new
+HELPER = TestInterfaceHelper.new
+
+get '/testinterface' do
+  'ready'.to_json
+end
 
 # V
 post '/test/reset/all' do
@@ -57,8 +61,8 @@ post '/test/reset/standard?' do
   load_all_follows_from_tweet 5000
   puts 'follows done'
 
-  load_all_tweets_from_tweet 100_176
-  puts 'tweets done'
+  # load_all_tweets_from_tweet 100_176
+  # puts 'tweets done'
 
   HELPER.recreate_testuser
   HELPER.reset_db_peak_sequence # reset sequence
@@ -83,6 +87,7 @@ post '/test/users/create?' do
     fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
     # neo = User.new(username: fake_ppl, password: get_fake_password)
     new_userid = HELPER.create_new_user_noid(fake_ppl, HELPER.get_fake_password)
+
     if new_userid >= 0
       users_ids[count - 1] = new_userid
       new_ppl[new_userid] = fake_ppl
@@ -172,16 +177,20 @@ post '/test/user/follows?' do
 end
 
 def load_all_users_from_seed(limit)
+  result = []
   File.open(SEED_USERS_DIR, 'r').each do |line|
     break if limit <= 0
     str = line.split(',')
     uid = Integer(str[0]) # ID provided in seed, useless for our implementation for now
     name = str[1].gsub(/\n/, "")
     name = name.gsub(/\r/, "")
+    result << {'id': uid, 'username': name, 'email': "xxx@brandeis.edu","password_hash": HELPER.get_fake_password,"number_of_followers": 0, "number_of_leaders": 0}
+    # result << [uid,name,"xxx@brandeis.edu",0,0]
     # users_hashtable[uid] = name
-    HELPER.create_new_user(user_id: uid, username: name, password: HELPER.get_fake_password)
+    HELPER.create_new_user(uid, name, HELPER.get_fake_password)
     limit -= 1
   end
+  HELPER.bulkload_new_user(result)
 end
 
 def load_all_follows_from_tweet(limit)
