@@ -44,24 +44,23 @@ class TestInterfaceHelper
     return 0
   end
 
-  def bulkload_new_user(result)
-    puts result.to_json
-    puts 'bulkbulkbulk'
-    RestClient.post PREFIX_USER_SERVICE + '/bulkinsert', {'bulk': result.to_json}
-  end
-
+  # def bulkload_new_user(result)
+  #   puts result.to_json
+  #   puts 'bulkbulkbulk'
+  #   RestClient.post PREFIX_USER_SERVICE + '/bulkinsert', {'bulk': result.to_json}
+  # end
 
   def follow(user_id, leader_id)
-    # TODO
+    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/unfollow", {'me': user_id}.to_json
   end
 
   def unfollow(user_id, leader_id)
-    # TODO
+    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/follow", {'me': user_id}.to_json
   end
 
   def tweet(user_id, message, timestamps)
     jsonmsg = { "username": get_username(user_id), "id": user_id, "time": timestamps }.to_json
-    # RestClient.post PREFIX_TWEET_W_SERVICE + '/testing/tweets/new', jsonmsg, "CONTENT_TYPE" => "application/json"
+    RestClient.post PREFIX_TWEET_W_SERVICE + '/testing/tweets/new', jsonmsg
   end
 
   def clear_all 
@@ -71,15 +70,15 @@ class TestInterfaceHelper
   end
 
   def destroy_all_follows
-    RestClient.post PREFIX_FOLLOW_SERVICE + '/testinterface/clearall',""
+    RestClient.post PREFIX_FOLLOW_SERVICE + '/testinterface/clearall', ""
   end
 
   def destroy_all_users
-    
+    RestClient.post PREFIX_USER_SERVICE + '/removeall', ""
   end
 
   def destroy_all_tweets
-    # TODO
+    RestClient.delete PREFIX_TWEET_W_SERVICE + '/api/v1/tweets/delete', ""
   end
 
   def recreate_testuser

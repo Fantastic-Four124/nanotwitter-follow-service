@@ -61,8 +61,8 @@ post '/test/reset/standard?' do
   load_all_follows_from_tweet 5000
   puts 'follows done'
 
-  # load_all_tweets_from_tweet 100_176
-  # puts 'tweets done'
+  load_all_tweets_from_tweet 100_176
+  puts 'tweets done'
 
   HELPER.recreate_testuser
   HELPER.reset_db_peak_sequence # reset sequence
