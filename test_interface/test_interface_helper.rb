@@ -13,41 +13,42 @@ require 'rest-client'
 class TestInterfaceHelper
 
   def get_username(user_id)
-    RestClient.get PREFIX_USER_SERVICE + "/api/v1/#{user_id}"
-    if last_response.ok? 
-      if last_response.body == '{\"err\":true}'
-        puts "user_id #{user_id} not in database!"
-        return 'nil'
-      else
-        return last_response.body
-      end
+    last_response = RestClient.get PREFIX_USER_SERVICE + "/#{user_id}", ""
+    if last_response.body == '{\"err\":true}'
+      puts "user_id #{user_id} not in database!"
+      return 'nil'
+    else
+      return last_response.body
     end
   end
 
   def get_random_userid
-    # TODO
-    return 0
+    last_response = RestClient.get PREFIX_USER_SERVICE + "/random", ""
+    if last_response.code != 200
+      last_response = RestClient.get PREFIX_USER_SERVICE + "/random", ""
+    end
+    puts last_response.body.to_i
+    return last_response.body.to_i
   end
 
   def create_new_user(user_id, username, password)
-    puts "id:#{user_id}, name:#{username}, password:#{password}"
+    # puts "id:#{user_id}, name:#{username}, password:#{password}"
     puts({ name: username, password: password }.to_json)
-
-    # TODO
+    RestClient.get PREFIX_USER_SERVICE + '/testcreate', {id: user_id, password: password, email: "xxx@brandeis.edu"}.to_json
   end
 
   # This has to return an id
   def create_new_user_noid(username, password)
     puts({ name: username, password: password }.to_json)
-    # post PREFIX_USER_SERVICE + '/testcreate', {name: username, password: password}.to_json, "CONTENT_TYPE" => "application/json"
-    # puts last_response.body.to_i
-    return 0
+    response = RestClient.get PREFIX_USER_SERVICE + '/testcreate', {id: user_id, password: password, email: "xxx@brandeis.edu"}.to_json
+    puts response.body.to_i
+    return response.body.to_i
   end
 
   # def bulkload_new_user(result)
   #   puts result.to_json
   #   puts 'bulkbulkbulk'
-  #   RestClient.post PREFIX_USER_SERVICE + '/bulkinsert', {'bulk': result.to_json}
+  #   RestClient.post PREFIX_USER_SERVICE + '/bulkinsert', {'bulk': result}.to_json
   # end
 
   def follow(user_id, leader_id)

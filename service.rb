@@ -22,7 +22,7 @@ set :expose_headers, 'location,link'
 
 PREFIX = '/api/v1'
 CLIENT = MQClient.new('rpc_queue',ENV['RABBIT_MQ'])
-CLIENT_USR = MQClient.new('usr_fo_queue', ENV['RABBIT_MQ_USR'])
+CLIENT_USR = MQClient.new('timeline_queue', ENV['RABBIT_MQ_USR'])
 
 # ENV = {
 #     "RABBITMQ_BIGWIG_REST_API_URL": "https://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@bigwig.lshift.net/management/179502/api",

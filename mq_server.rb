@@ -120,13 +120,13 @@ def get_leaders_followers_map(redis_leader_key, redis_user_key)
 
   if tmp1 == nil
     tmp1 = '{}'
-    $redis.set("#{leader_id} leaders", '{}')
+    $redis.set("#{redis_leader_key} leaders", '{}')
   end
 
   if tmp2 == nil
     puts 'make new 2'
     tmp2 = '{}'
-    $redis.set("#{follower_id} followers", '{}')
+    $redis.set("#{redis_user_key} followers", '{}')
   end
   return JSON.parse(tmp1), JSON.parse(tmp2)
 end
