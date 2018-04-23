@@ -212,7 +212,7 @@ def load_all_tweets_from_tweet(limit)
     id = Integer(str[0])
     text = str[1]
     time_stamp = str[2]
-    HELPER.tweet(user_id: id, message: text, timestamps: time_stamp)
+    HELPER.tweet(id, text, time_stamp)
     limit -= 1
   end
 end

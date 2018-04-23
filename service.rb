@@ -158,6 +158,7 @@ end
 
 post '/users/:id/follow' do
   puts params
+  
   return fo(params['id'],params['me'],true)
 end
 
