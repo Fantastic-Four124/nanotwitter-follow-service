@@ -34,7 +34,7 @@ class TestInterfaceHelper
   def create_new_user(user_id, username, password)
     # puts "id:#{user_id}, name:#{username}, password:#{password}"
     puts({ name: username, password: password }.to_json)
-    RestClient.post PREFIX_USER_SERVICE + '/testcreate', {id: user_id, password: password, email: "xxx@brandeis.edu"}
+    RestClient.post PREFIX_USER_SERVICE + '/testcreate', {password: password, email: "xxx@brandeis.edu"}
   end
 
   # This has to return an id
