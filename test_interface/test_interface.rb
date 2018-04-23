@@ -14,7 +14,7 @@ post '/test/reset/all' do
   HELPER.destroy_all_users
   HELPER.destroy_all_tweets
   HELPER.destroy_all_follows
-  report_status.to_json
+  # report_status.to_json
   # TODO 
 end
 
@@ -190,7 +190,7 @@ def load_all_users_from_seed(limit)
     HELPER.create_new_user(uid, name, HELPER.get_fake_password)
     limit -= 1
   end
-  HELPER.bulkload_new_user(result)
+  # HELPER.bulkload_new_user(result)
 end
 
 def load_all_follows_from_tweet(limit)

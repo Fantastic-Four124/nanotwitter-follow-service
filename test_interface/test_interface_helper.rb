@@ -34,13 +34,13 @@ class TestInterfaceHelper
   def create_new_user(user_id, username, password)
     # puts "id:#{user_id}, name:#{username}, password:#{password}"
     puts({ name: username, password: password }.to_json)
-    RestClient.get PREFIX_USER_SERVICE + '/testcreate', {id: user_id, password: password, email: "xxx@brandeis.edu"}.to_json
+    RestClient.get PREFIX_USER_SERVICE + '/testcreate', {id: user_id, password: password, email: "xxx@brandeis.edu"}
   end
 
   # This has to return an id
   def create_new_user_noid(username, password)
     puts({ name: username, password: password }.to_json)
-    response = RestClient.get PREFIX_USER_SERVICE + '/testcreate', {id: user_id, password: password, email: "xxx@brandeis.edu"}.to_json
+    response = RestClient.get PREFIX_USER_SERVICE + '/testcreate', {password: password, email: "xxx@brandeis.edu"}
     puts response.body.to_i
     return response.body.to_i
   end
@@ -52,16 +52,16 @@ class TestInterfaceHelper
   # end
 
   def follow(user_id, leader_id)
-    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/unfollow", {'me': user_id}.to_json
+    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/unfollow", {'me': user_id}
   end
 
   def unfollow(user_id, leader_id)
-    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/follow", {'me': user_id}.to_json
+    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/follow", {'me': user_id}
   end
 
   def tweet(user_id, message, timestamps)
-    jsonmsg = { "username": get_username(user_id), "id": user_id, "time": timestamps }.to_json
-    RestClient.post PREFIX_TWEET_W_SERVICE + '/testing/tweets/new', jsonmsg
+    jsonmsg = { "username": get_username(user_id), "id": user_id, "time": timestamps }
+    RestClient.post PREFIX_TWEET_W_SERVICE + '/api/v1/testing/tweets/new', jsonmsg
   end
 
   def clear_all 
@@ -79,7 +79,7 @@ class TestInterfaceHelper
   end
 
   def destroy_all_tweets
-    RestClient.delete PREFIX_TWEET_W_SERVICE + '/api/v1/tweets/delete', ""
+    RestClient.delete PREFIX_TWEET_W_SERVICE + '/api/v1/tweets/delete'
   end
 
   def recreate_testuser
