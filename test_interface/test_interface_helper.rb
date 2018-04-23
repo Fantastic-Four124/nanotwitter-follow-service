@@ -60,7 +60,7 @@ class TestInterfaceHelper
   end
 
   def tweet(user_id, message, timestamps)
-    jsonmsg = { "username": get_username(user_id), "id": user_id, "time": timestamps }
+    jsonmsg = { "username": get_username(user_id), "id": user_id, "time": timestamps, 'tweet-input': message }
     RestClient.post PREFIX_TWEET_W_SERVICE + '/api/v1/testing/tweets/new', jsonmsg
   end
 
