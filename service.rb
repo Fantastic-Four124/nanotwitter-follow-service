@@ -21,7 +21,7 @@ set :allow_headers, 'accept,content-type,if-modified-since'
 set :expose_headers, 'location,link'
 
 PREFIX = '/api/v1'
-CLIENT = MQClient.new('rpc_queue',ENV['RABBIT_MQ'])
+CLIENT = MQClient.new('rpc_queue', ENV['RABBIT_MQ'])
 CLIENT_USR = MQClient.new('timeline_queue', ENV['RABBIT_MQ_USR'])
 
 # ENV = {

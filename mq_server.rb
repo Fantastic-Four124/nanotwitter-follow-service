@@ -100,7 +100,7 @@ def update_cache_follow(follower_id, leader_id, isFollowing)
     followers_of_leader[follower_id] = true
     leaders_of_user[leader_id] = true
     users_info_map['number_of_leaders'] += 1 if !users_info_map.nil? 
-    eader_info_map['number_of_followers'] += 1 if !leader_info_map.nil?
+    leader_info_map['number_of_followers'] += 1 if !leader_info_map.nil?
   else # We dont love anymore
     followers_of_leader.delete(follower_id)
     leaders_of_user.delete(leader_id)
