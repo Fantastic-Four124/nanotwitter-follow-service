@@ -209,9 +209,11 @@ def load_all_tweets_from_tweet(limit)
   File.open('./seeds/tweetsMINI.csv', 'r').each do |line|
     break if limit <= 0 # enforce a limit if there is one
     str = line.split(',')
-    id = Integer(str[0])
+    id = str[0].to_i
     text = str[1]
     time_stamp = str[2]
+    puts id
+    puts text
     HELPER.tweet(id, text, time_stamp)
     limit -= 1
   end
