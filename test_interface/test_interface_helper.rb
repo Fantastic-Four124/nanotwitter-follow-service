@@ -52,11 +52,11 @@ class TestInterfaceHelper
   # end
 
   def follow(user_id, leader_id)
-    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/unfollow", {'me': user_id}
+    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/follow", {'me': user_id}
   end
 
   def unfollow(user_id, leader_id)
-    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/follow", {'me': user_id}
+    RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/unfollow", {'me': user_id}
   end
 
   def tweet(user_id, message, timestamps)
