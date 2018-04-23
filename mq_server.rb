@@ -83,7 +83,7 @@ def follower_unfollow_leader(follower_id, leader_id)
   update_cache_follow(follower_id, leader_id, false)
   link = Follow.find_by(user_id: follower_id, leader_id: leader_id)
   if !link.nil?
-    puts "follower_follow_leader"
+    puts "follower_unfollow_leader"
     Follow.delete(link.id)
   end
 end
