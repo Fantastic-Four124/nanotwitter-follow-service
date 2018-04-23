@@ -7,4 +7,4 @@ RETRY_LIMIT = 15
 PREFIX_TWEET_W_SERVICE = "https://nt-tweet-writer.herokuapp.com"
 PREFIX_FOLLOW_SERVICE = 'https://fierce-garden-41263.herokuapp.com'
 PREFIX_USER_SERVICE = 'https://nanotwitter-userservice.herokuapp.com'
-SEED_USERS_DIR = './seeds/users.csv'
+SEED_USERS_DIR = './seeds/usersMINI.csv'

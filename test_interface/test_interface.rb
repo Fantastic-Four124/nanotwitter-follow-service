@@ -194,7 +194,7 @@ def load_all_users_from_seed(limit)
 end
 
 def load_all_follows_from_tweet(limit)
-   File.open('./seeds/follows.csv', 'r').each do |line|
+   File.open('./seeds/followsMINI.csv', 'r').each do |line|
     break if limit <= 0
     str = line.split(',')
     id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
@@ -206,7 +206,7 @@ def load_all_follows_from_tweet(limit)
 end
 
 def load_all_tweets_from_tweet(limit)
-  File.open('./seeds/tweets.csv', 'r').each do |line|
+  File.open('./seeds/tweetsMINI.csv', 'r').each do |line|
     break if limit <= 0 # enforce a limit if there is one
     str = line.split(',')
     id = Integer(str[0])
