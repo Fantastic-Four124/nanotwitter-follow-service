@@ -13,7 +13,7 @@ require 'rest-client'
 class TestInterfaceHelper
 
   def get_username(user_id)
-    last_response = RestClient.get PREFIX_USER_SERVICE + "/#{user_id}", ""
+    last_response = RestClient.get PREFIX_USER_SERVICE + "/#{user_id}"
     if last_response.body == '{\"err\":true}'
       puts "user_id #{user_id} not in database!"
       return 'nil'
@@ -23,9 +23,9 @@ class TestInterfaceHelper
   end
 
   def get_random_userid
-    last_response = RestClient.get PREFIX_USER_SERVICE + "/random", ""
+    last_response = RestClient.get PREFIX_USER_SERVICE + "/random"
     if last_response.code != 200
-      last_response = RestClient.get PREFIX_USER_SERVICE + "/random", ""
+      last_response = RestClient.get PREFIX_USER_SERVICE + "/random"
     end
     puts last_response.body.to_i
     return last_response.body.to_i
