@@ -10,9 +10,9 @@ require_relative 'mq_client.rb'
 require_relative 'local_env.rb' if ENV['RACK_ENV'] != 'production'
 require_relative 'test_interface/test_interface.rb'
 
-Thread.new do
-  require_relative 'mq_server.rb'
-end
+# Thread.new do
+#   require_relative 'mq_server.rb'
+# end
 
 set :environment, :development
 set :allow_origin, '*'

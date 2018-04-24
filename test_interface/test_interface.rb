@@ -54,12 +54,17 @@ post '/test/reset/standard?' do
 
   usernames = load_all_users_from_seed 1000
   puts 'users done'
+  GC.start
 
-  load_all_follows_from_tweet 5000
+  load_all_follows_from_tweet 6000
   puts 'follows done'
+  GC.start
+  
 
-  load_all_tweets_from_tweet 100_176, usernames
+  load_all_tweets_from_tweet num, usernames
   puts 'tweets done'
+  GC.start
+  
 
   HELPER.recreate_testuser
   HELPER.reset_db_peak_sequence # reset sequence
@@ -183,7 +188,8 @@ end
 def load_all_users_from_seed(limit)
   result = []
   usernames = {}
-  File.open(ENV['FILE_USERS'], 'r').each do |line|
+  f = File.open(ENV['FILE_USERS'], 'r')
+  f.each do |line|
     break if limit <= 0
     str = line.split(',')
     uid = Integer(str[0]) # ID provided in seed, useless for our implementation for now
@@ -196,12 +202,14 @@ def load_all_users_from_seed(limit)
     HELPER.create_new_user(uid, name, HELPER.get_fake_password)
     limit -= 1
   end
+  f.close()
   return usernames
   # HELPER.bulkload_new_user(result)
 end
 
 def load_all_follows_from_tweet(limit)
-   File.open(ENV['FILE_FOLLOW'], 'r').each do |line|
+  f = File.open(ENV['FILE_FOLLOW'], 'r')
+  f.each do |line|
     break if limit <= 0
     str = line.split(',')
     id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
@@ -210,13 +218,15 @@ def load_all_follows_from_tweet(limit)
     HELPER.follow(id1, id2)
     limit -= 1
   end
+  f.close()
 end
 
 
 
 def load_all_tweets_from_tweet(limit, usernames)
   result = []
-  File.open(ENV['FILE_TWEETS'], 'r').each do |line|
+  f = File.open(ENV['FILE_TWEETS'], 'r')
+  f.each do |line|
     break if limit <= 0 # enforce a limit if there is one
     str = line.split(',')
     id = str[0].to_i
@@ -228,6 +238,7 @@ def load_all_tweets_from_tweet(limit, usernames)
     # HELPER.tweet(id, text, time_stamp) Insert one by one
     limit -= 1
   end
+  f.close()
   HELPER.bulk_tweet(result)
   return result
 end
