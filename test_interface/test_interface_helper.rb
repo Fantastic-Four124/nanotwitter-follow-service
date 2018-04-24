@@ -67,7 +67,7 @@ class TestInterfaceHelper
   def bulk_tweet(tweets)
     jsonmsg = { "tweets": tweets }
     puts jsonmsg
-    # RestClient.post PREFIX_TWEET_W_SERVICE + '/api/v1/tweets/bulkinsert', jsonmsg
+    RestClient.post PREFIX_TWEET_W_SERVICE + '/api/v1/tweets/bulkinsert', jsonmsg
   end
 
   def clear_all 
