@@ -91,7 +91,7 @@ post '/test/users/create?' do
     if new_userid >= 0
       users_ids[count - 1] = new_userid
       new_ppl[new_userid] = fake_ppl
-      puts neo.id
+      # puts neo.id
     end
     count -= 1
   end
