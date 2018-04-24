@@ -166,7 +166,7 @@ class TestInterfaceHelper
       # end
       # # OLD VERSION
 
-      puts "#{user_id}: #{msg}"
+      puts "#{usr_id}: #{msg}"
       
       tweet(usr_id, msg, '')
 
