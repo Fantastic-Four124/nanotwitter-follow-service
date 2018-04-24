@@ -84,7 +84,7 @@ post '/test/users/create?' do
   users_ids = Array.new(count)
   new_ppl = {}
   while count.positive?
-    fake_ppl = Faker::Name.first_name + Faker::Name.last_name + generate_code(5)
+    fake_ppl = Faker::Name.first_name + Faker::Name.last_name + HELPER.generate_code(5)
     # neo = User.new(username: fake_ppl, password: get_fake_password)
     new_userid = HELPER.create_new_user_noid(fake_ppl, HELPER.get_fake_password)
 
@@ -99,7 +99,7 @@ post '/test/users/create?' do
   # Fake tweets
   result = {
     'New Fake Users': new_ppl,
-    'New Fake Tweets': make_fake_tweets(users_ids, tweet),
+    'New Fake Tweets': HELPER.make_fake_tweets(users_ids, tweet),
     'Report': report_status
   }
   puts result
