@@ -115,7 +115,7 @@ class TestInterfaceHelper
   def report_status
     status = [
       RestClient.get(PREFIX_TWEET_W_SERVICE + '/status'),
-      RestClient.get(PREFIX_USER_SERVICE + '/status'),
+      RestClient.get(PREFIX_USER_SERVICE + '/test/status'),
       RestClient.get(PREFIX_FOLLOW_SERVICE + '/status')
     ].to_json
     return status
@@ -166,7 +166,7 @@ class TestInterfaceHelper
       # end
       # # OLD VERSION
       
-      
+      tweet(usr_id, msg, '')
 
 
       num -= 1
