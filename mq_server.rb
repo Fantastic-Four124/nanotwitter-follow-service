@@ -152,12 +152,12 @@ def get_user_obj_cache(follower_id, leader_id)
   return users_info_map, leader_info_map
 end
 
-begin
-  server = FollowerServer.new("amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10242/U1D3A0hgJsuO")
+# begin
+#   server = FollowerServer.new("amqp://YYs2R_X-:11ao3Y7jYnsXg_Ax-U5iA5LYCJ2YUlKp@swift-bartsia-719.bigwig.lshift.net:10242/U1D3A0hgJsuO")
 
-  puts ' [x] Awaiting RPC requests'
-  server.start('rpc_queue')
-  #server.start2('rpc_queue_hello')
-rescue Interrupt => _
-  server.stop
-end
+#   puts ' [x] Awaiting RPC requests'
+#   server.start('rpc_queue')
+#   #server.start2('rpc_queue_hello')
+# rescue Interrupt => _
+#   server.stop
+# end
