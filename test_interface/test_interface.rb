@@ -55,7 +55,7 @@ post '/test/reset/standard?' do
   users_hashtable = Array.new(NUMBER_OF_SEED_USERS + 1) # from user_id to user_name
   users_hashtable[0] = TESTUSER_NAME
 
-  usersnames = load_all_users_from_seed 1000
+  usernames = load_all_users_from_seed 1000
   puts 'users done'
 
   load_all_follows_from_tweet 5000
