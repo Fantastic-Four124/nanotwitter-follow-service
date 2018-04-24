@@ -113,14 +113,12 @@ class TestInterfaceHelper
   end
 
   def report_status
-    # status = {
-    #   'number of users': User.count,
-    #   'number of tweets': Tweet.count,
-    #   'number of follow': Follow.count,
-    #   'Id of Test user': TESTUSER_ID
-    # }
-    # status
-    return 'ojbk'
+    status = [
+      RestClient.get(PREFIX_TWEET_W_SERVICE + '/status'),
+      RestClient.get(PREFIX_USER_SERVICE + '/status'),
+      RestClient.get(PREFIX_FOLLOW_SERVICE + '/status')
+    ].to_json
+    return status
   end
 
   def generate_code(number)

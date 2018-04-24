@@ -69,6 +69,10 @@ get '/followers/:user_id' do
   get_user_following(id, true)
 end
 
+get '/status' do
+  "number of follows: #{Follow.count}"
+end
+
 get PREFIX + '/:token/users/:id/follower-list' do
   # puts params
   input = JSON.parse $redisUserServiceCache.get(params['token']) # Get the user id
@@ -158,7 +162,7 @@ end
 
 post '/users/:id/follow' do
   puts params
-  
+
   return fo(params['id'],params['me'],true)
 end
 

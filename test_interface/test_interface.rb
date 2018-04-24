@@ -35,7 +35,7 @@ end
 # How many users, follows, and tweets are there. What is the TestUser’s id
 # V
 get '/test/status' do
-  report_status.to_json
+  HELPER.report_status
 end
 
 # Read from seed
