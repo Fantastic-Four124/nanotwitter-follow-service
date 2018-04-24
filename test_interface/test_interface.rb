@@ -74,7 +74,7 @@ end
 # each of those users gets c (integer) fake tweets. Defaults to zero.
 # Example: /test/users/create?count=100&tweets=5
 post '/test/users/create?' do
-  HELPER.freset_db_peak_sequence # reset sequence
+  # HELPER.freset_db_peak_sequence # reset sequence
   input_count = params[:count]
   input_tweet = params[:tweets]
   count = Integer(input_count)
