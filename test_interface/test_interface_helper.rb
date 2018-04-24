@@ -143,35 +143,36 @@ class TestInterfaceHelper
 
   def make_fake_tweets(user_ids, num)
     result = {}
-    while num.positive?
-      txts = [
-        Faker::Pokemon.name + ' uses ' + Faker::Pokemon.move,
-        Faker::SiliconValley.quote,
-        Faker::SiliconValley.motto,
-        Faker::ProgrammingLanguage.name + ' is the best!',
-        'I went to ' + Faker::University.name + '.',
-        'Lets GO! ' + Faker::Team.name
-      ]
-      msg = txts.sample
-      usr_id = user_ids.sample
-
-      # # OLD VERSION
-      # new_tweet = Tweet.new(user_id: usr_id, message: msg)
-      # if new_tweet.save
-      #   result[usr_id] = msg
-      #   $redis.lpush('global', new_tweet.id)                # Cache it
-      #   $redis.rpop('global') if $redis.llen('global') > 50 # Cache it
-      # else
-      #   puts 'Fake tweet Failed.'
-      # end
-      # # OLD VERSION
-
-      puts "#{usr_id}: #{msg}"
-      
-      tweet(usr_id, msg, '')
-
-
-      num -= 1
+    user_ids.each do |usr_id| 
+      n = num
+      while n.positive?
+        txts = [
+          Faker::Pokemon.name + ' uses ' + Faker::Pokemon.move,
+          Faker::SiliconValley.quote,
+          Faker::SiliconValley.motto,
+          Faker::ProgrammingLanguage.name + ' is the best!',
+          'I went to ' + Faker::University.name + '.',
+          'Lets GO! ' + Faker::Team.name
+        ]
+        msg = txts.sample
+  
+        # # OLD VERSION
+        # new_tweet = Tweet.new(user_id: usr_id, message: msg)
+        # if new_tweet.save
+        #   result[usr_id] = msg
+        #   $redis.lpush('global', new_tweet.id)                # Cache it
+        #   $redis.rpop('global') if $redis.llen('global') > 50 # Cache it
+        # else
+        #   puts 'Fake tweet Failed.'
+        # end
+        # # OLD VERSION
+  
+        result[usr_id] = msg
+  
+        tweet(usr_id, msg, '')
+  
+        n -= 1
+      end
     end
     return result
   end
