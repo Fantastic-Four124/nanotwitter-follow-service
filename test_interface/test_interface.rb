@@ -55,13 +55,13 @@ post '/test/reset/standard?' do
   users_hashtable = Array.new(NUMBER_OF_SEED_USERS + 1) # from user_id to user_name
   users_hashtable[0] = TESTUSER_NAME
 
-  load_all_users_from_seed 1000
+  usersnames = load_all_users_from_seed 1000
   puts 'users done'
 
   load_all_follows_from_tweet 5000
   puts 'follows done'
 
-  load_all_tweets_from_tweet 100_176
+  load_all_tweets_from_tweet 100_176, usernames
   puts 'tweets done'
 
   HELPER.recreate_testuser
@@ -178,23 +178,26 @@ end
 
 def load_all_users_from_seed(limit)
   result = []
-  File.open('./seeds/users.csv', 'r').each do |line|
+  usernames = {}
+  File.open('./seeds/usersMINI.csv', 'r').each do |line|
     break if limit <= 0
     str = line.split(',')
     uid = Integer(str[0]) # ID provided in seed, useless for our implementation for now
     name = str[1].gsub(/\n/, "")
     name = name.gsub(/\r/, "")
+    usernames[uid] = name
     result << {'id': uid, 'username': name, 'email': "xxx@brandeis.edu","password_hash": HELPER.get_fake_password,"number_of_followers": 0, "number_of_leaders": 0}
     # result << [uid,name,"xxx@brandeis.edu",0,0]
     # users_hashtable[uid] = name
     HELPER.create_new_user(uid, name, HELPER.get_fake_password)
     limit -= 1
   end
+  return usernames
   # HELPER.bulkload_new_user(result)
 end
 
 def load_all_follows_from_tweet(limit)
-   File.open('./seeds/follows.csv', 'r').each do |line|
+   File.open('./seeds/followsMINI.csv', 'r').each do |line|
     break if limit <= 0
     str = line.split(',')
     id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
@@ -205,8 +208,11 @@ def load_all_follows_from_tweet(limit)
   end
 end
 
-def load_all_tweets_from_tweet(limit)
-  File.open('./seeds/tweets.csv', 'r').each do |line|
+
+
+def load_all_tweets_from_tweet(limit, usernames)
+  result = []
+  File.open('./seeds/tweetsMINI.csv', 'r').each do |line|
     break if limit <= 0 # enforce a limit if there is one
     str = line.split(',')
     id = str[0].to_i
@@ -214,7 +220,10 @@ def load_all_tweets_from_tweet(limit)
     time_stamp = str[2]
     puts id
     puts text
-    HELPER.tweet(id, text, time_stamp)
+    result << {"id": id, "username": usernames[id], "tweet-input": text, "timestamp": time_stamp} # for bulk insert 
+    # HELPER.tweet(id, text, time_stamp) Insert one by one
     limit -= 1
   end
+  HELPER.bulk_tweet(result)
+  return result
 end
