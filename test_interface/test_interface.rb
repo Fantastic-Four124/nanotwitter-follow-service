@@ -11,11 +11,8 @@ end
 
 # V
 post '/test/reset/all' do
-  HELPER.destroy_all_users
-  HELPER.destroy_all_tweets
-  HELPER.destroy_all_follows
-  # report_status.to_json
-  # TODO 
+  HELPER.clear_all
+  HELPER.report_status
 end
 
 # V
