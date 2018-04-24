@@ -165,6 +165,8 @@ class TestInterfaceHelper
       #   puts 'Fake tweet Failed.'
       # end
       # # OLD VERSION
+
+      puts "#{user_id}: #{msg}"
       
       tweet(usr_id, msg, '')
 
