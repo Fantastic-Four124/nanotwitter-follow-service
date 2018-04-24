@@ -23,12 +23,13 @@ class TestInterfaceHelper
   end
 
   def get_random_userid
-    last_response = RestClient.get PREFIX_USER_SERVICE + "/test/random"
-    if last_response.code != 200
-      last_response = RestClient.get PREFIX_USER_SERVICE + "/test/random"
-    end
-    puts last_response.body.to_i
-    return last_response.body.to_i
+    # last_response = RestClient.get PREFIX_USER_SERVICE + "/test/random"
+    # if last_response.code != 200
+    #   last_response = RestClient.get PREFIX_USER_SERVICE + "/test/random"
+    # end
+    # puts last_response.body.to_i
+    # return last_response.body.to_i
+    Random.rand(1000)
   end
 
   def create_new_user(user_id, username, password)
