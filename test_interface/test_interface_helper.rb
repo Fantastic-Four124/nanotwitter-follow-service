@@ -123,7 +123,7 @@ class TestInterfaceHelper
   end
 
   def get_testuser_timeline
-    RestClient.get(PREFIX_USER_SERVICE + "/api/v1/testuser/users/#{TESTUSER_ID}/timeline")
+    RestClient.get(PREFIX_TWEET_R_SERVICE + "/api/v1/testuser/users/#{TESTUSER_ID}/timeline")
   end
 
   def generate_code(number)
