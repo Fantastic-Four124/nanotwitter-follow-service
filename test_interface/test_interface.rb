@@ -100,7 +100,7 @@ post '/test/users/create?' do
   result = {
     'New Fake Users': new_ppl,
     'New Fake Tweets': HELPER.make_fake_tweets(users_ids, tweet),
-    'Report': report_status
+    'Report': HELPER.report_status
   }
   puts result
   result.to_json
