@@ -29,7 +29,7 @@ class TestInterfaceHelper
     # end
     # puts last_response.body.to_i
     # return last_response.body.to_i
-    Random.rand(1000)
+    1 + Random.rand(1000)
   end
 
   def create_new_user(user_id, username, password)
