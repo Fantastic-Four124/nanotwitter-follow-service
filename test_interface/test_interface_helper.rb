@@ -122,6 +122,10 @@ class TestInterfaceHelper
     return status
   end
 
+  def get_testuser_timeline
+    RestClient.get(PREFIX_USER_SERVICE + "/api/v1/testuser/users/#{TESTUSER_ID}/timeline")
+  end
+
   def generate_code(number)
     charset = Array('A'..'Z') + Array('a'..'z')
     Array.new(number) { charset.sample }.join

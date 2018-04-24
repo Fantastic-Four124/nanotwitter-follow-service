@@ -150,7 +150,7 @@ post '/test/user/:user/follows?' do
 end
 
 post '/user/testuser' do
-
+  HELPER.get_testuser_timeline
 end
 
 post '/user/testuser/tweet' do
