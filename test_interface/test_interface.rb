@@ -149,6 +149,14 @@ post '/test/user/:user/follows?' do
   result.to_json
 end
 
+post '/user/testuser' do
+
+end
+
+post '/user/testuser/tweet' do
+  HELPER.tweet(TESTUSER_ID, "This is a test tweet by test user." , '')
+end
+
 # people randomly follow each others
 # example: /test/user/follow?count=10
 # V
