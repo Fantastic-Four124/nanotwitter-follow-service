@@ -231,8 +231,13 @@ def load_all_follows_from_tweet(limit)
     id1 = Integer(str[0]) # ID provided in seed, useless for our implementation for now
     id2 = Integer(str[1])
     puts "#{id1} fo #{id2}"
-    HELPER.follow(id1, id2)
-    limit -= 1
+    ##
+    link = Follow.find_by(user_id: id1, leader_id: id2)
+    if link.nil?
+      limit -= 1
+      HELPER.follow(id1, id2)
+    end
+    ##
   end
   f.close()
 end
