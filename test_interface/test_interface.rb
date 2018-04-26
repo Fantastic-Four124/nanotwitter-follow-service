@@ -41,6 +41,8 @@ end
 post '/test/reset/standard?' do
   puts params
   input = params[:tweets]
+  input2 = params[:users]
+  input3 = params[:follows]
   HELPER.clear_all
 
   if params.length == 1
@@ -49,14 +51,27 @@ post '/test/reset/standard?' do
     num = Integer(input) # only load n tweets from seed data
     raise ArgumentError, 'Argument is smaller than zero' if num <= 0
   end
+
+  if input2 == nil 
+    user_num = 1000
+  else
+    user_num = Integer(input2)
+  end
+
+  if input3 == nil
+    follow_num = 6000
+  else
+    follow_num = Integer(input3)
+  end
+
   users_hashtable = Array.new(NUMBER_OF_SEED_USERS + 1) # from user_id to user_name
   users_hashtable[0] = TESTUSER_NAME
 
-  usernames = load_all_users_from_seed 1000
+  usernames = load_all_users_from_seed user_num
   puts 'users done'
   GC.start
 
-  load_all_follows_from_tweet 6000
+  load_all_follows_from_tweet follow_num
   puts 'follows done'
   GC.start
   
@@ -209,6 +224,7 @@ end
 
 def load_all_follows_from_tweet(limit)
   f = File.open(ENV['FILE_FOLLOW'], 'r')
+  HELPER.reset_follows_id
   f.each do |line|
     break if limit <= 0
     str = line.split(',')

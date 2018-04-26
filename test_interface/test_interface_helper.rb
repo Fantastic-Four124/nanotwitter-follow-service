@@ -60,6 +60,10 @@ class TestInterfaceHelper
     RestClient.post PREFIX_FOLLOW_SERVICE + "/users/#{leader_id}/unfollow", {'me': user_id}
   end
 
+  def reset_follows_id
+
+  end
+
   def tweet(user_id, message, timestamps)
     jsonmsg = { "username": get_username(user_id), "id": user_id, "time": timestamps, 'tweet-input': message }
     RestClient.post PREFIX_TWEET_W_SERVICE + '/testing/tweets/new', jsonmsg
@@ -75,6 +79,7 @@ class TestInterfaceHelper
     destroy_all_follows
     destroy_all_users
     destroy_all_tweets
+    # rake db:reset
   end
 
   def destroy_all_follows
