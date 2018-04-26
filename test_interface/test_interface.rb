@@ -58,7 +58,7 @@ post '/test/reset/standard?' do
   usernames = load_all_users_from_seed 1000
   puts 'users done'
 
-  load_all_follows_from_tweet 5000
+  load_all_follows_from_tweet 2000
   puts 'follows done'
 
   load_all_tweets_from_tweet 100_176, usernames
