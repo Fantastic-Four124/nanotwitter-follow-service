@@ -233,7 +233,14 @@ def load_all_follows_from_tweet(limit)
     puts "#{id1} fo #{id2}"
     ##
     link = Follow.find_by(user_id: id1, leader_id: id2)
+
     if link.nil?
+      puts "follower_follow_leader"
+      relation = Follow.new
+      relation.user_id = id1
+      relation.leader_id = id2
+      relation.follow_date = Time.now
+      relation.save
       limit -= 1
       HELPER.follow(id1, id2)
     end
